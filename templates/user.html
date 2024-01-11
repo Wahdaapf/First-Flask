@@ -1,5 +1,5 @@
 {% extends "vid3.html" %}
-{% block title %}Login Page{% endblock %}
+{% block title %}User Page{% endblock %}
 {% block content %}
     {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -8,9 +8,5 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-    <form action="#" method="post">
-        <p>Name: </p>
-        <input type="text" name="nm">
-        <input type="submit" value="submit">
-    </form>
+    <p>Welcome, {{user}}</p>
 {% endblock %}
