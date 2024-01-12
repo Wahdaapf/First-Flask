@@ -11,7 +11,7 @@ app.permanent_session_lifetime = timedelta(minutes=5)
 db = SQLAlchemy(app)
 
 class users(db.Model):
-    _id = db.Column("id", db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     email = db.Column(db.String(100))
     def __init__(self, name, email):
@@ -22,12 +22,25 @@ class users(db.Model):
 def home():
     return render_template("vid31.html")
 
+@app.route("/view")
+def view():
+    return render_template("view.html", values= users.query.all())
+
 @app.route("/login", methods=["POST", "GET"])
 def test():
     if request.method == "POST":
         session.permanent = True
         user = request.form['nm']
         session["user"] = user
+
+        found_user = users.query.filter_by(name=user).first()
+        if found_user:
+            session['email'] = found_user.email
+        else:
+            usr = users(user, "")
+            db.session.add(usr)
+            db.session.commit()
+
         flash("Login Successfull")
         return redirect(url_for("user"))
     else:
@@ -41,9 +54,12 @@ def user():
     email = None
     if "user" in session:
         user = session['user']
-        if request.methods == 'POST':
+        if request.method == 'POST':
             email = request.form['email']
             session['email'] = email
+            found_user = users.query.filter_by(name=user).first()
+            found_user.email = email
+            db.session.commit()
             flash("email was saved")
         else:
             if "email" in session:
@@ -61,4 +77,6 @@ def logout():
     return render_template("login.html")
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True);

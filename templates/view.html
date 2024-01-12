@@ -1,0 +1,8 @@
+{% extends "vid3.html" %}
+{% block title %}View ALl Users{% endblock %}
+{% block content %}
+    {% for x in values %}
+        <p>name : {{x.name}}</p>
+        <p>email : {{x.email}}</p>
+    {% endfor %}
+{% endblock %}
